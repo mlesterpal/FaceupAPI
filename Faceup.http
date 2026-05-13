@@ -1,0 +1,6 @@
+@Faceup_HostAddress = http://localhost:5182
+
+GET {{Faceup_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
