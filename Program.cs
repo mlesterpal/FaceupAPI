@@ -25,8 +25,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<UserRepository>();
-
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PostRepository>();
+builder.Services.AddScoped<PostService>();
 
 var app = builder.Build();
 
