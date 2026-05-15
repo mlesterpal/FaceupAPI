@@ -21,6 +21,8 @@ public partial class FaceupContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Posts__3214EC07FFE9EF67");
 
+            entity.Property(e => e.ImageUrl).HasMaxLength(500);
+
             entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_Posts_Users");

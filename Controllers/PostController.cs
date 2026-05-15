@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Faceup.Models.Dto;
 using Faceup.Services;
+
 namespace Faceup.Controllers
 {
     [Route("api/[controller]")]
@@ -9,22 +10,38 @@ namespace Faceup.Controllers
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;
+        private readonly FileStorageService _fileStorage;
 
-        public PostController(PostService postService)
+        public PostController(PostService postService, FileStorageService fileStorage)
         {
             _postService = postService;
+            _fileStorage = fileStorage;
         }
 
         [HttpPost]
-        public IActionResult AddNewPost([FromBody] CreatePost post)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddNewPost([FromForm] CreatePostRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                _postService.AddPost(post);
+                if (string.IsNullOrWhiteSpace(request.Message)
+                    && (request.Image == null || request.Image.Length == 0))
+                {
+                    return BadRequest(new { message = "Post must include text or an image." });
+                }
+
+                var imageUrl = await _fileStorage.SaveImageAsync(request.Image, cancellationToken);
+                _postService.AddPost(request.Message, imageUrl);
+
                 return Ok(new
                 {
                     message = "Post added successfully",
+                    imageUrl
                 });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
