@@ -1,6 +1,19 @@
 @Faceup_HostAddress = http://localhost:5182
 
-GET {{Faceup_HostAddress}}/weatherforecast/
+### Get user posts
+GET {{Faceup_HostAddress}}/api/Post?userId=1
 Accept: application/json
+
+###
+
+### Create text-only post
+POST {{Faceup_HostAddress}}/api/Post
+Content-Type: multipart/form-data; boundary=----FaceupBoundary
+
+------FaceupBoundary
+Content-Disposition: form-data; name="message"
+
+Hello from Faceup.http
+------FaceupBoundary--
 
 ###

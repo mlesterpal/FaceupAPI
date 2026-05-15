@@ -1,5 +1,4 @@
 ﻿using Faceup.Models;
-using Faceup.Models.Dto;
 using Faceup.Models.Response;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +13,13 @@ namespace Faceup.Repository
             _context = context;
         }
 
-        public void AddPost(CreatePost newPost)
+        public void AddPost(string? message, string? imageUrl)
         {
             var post = new Post
             {
-                UserId = 1, // Assuming a default user ID for demonstration; replace with actual user ID as needed
-                Message = newPost.Message,
+                UserId = 1,
+                Message = message,
+                ImageUrl = imageUrl
             };
             _context.Posts.Add(post);
             _context.SaveChanges();

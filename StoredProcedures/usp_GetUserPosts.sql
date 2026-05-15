@@ -7,6 +7,7 @@ BEGIN
     SELECT
         p.Id AS PostId,
         p.Message,
+        p.ImageUrl,
         u.FirstName
     FROM dbo.Posts p
     INNER JOIN dbo.Users u ON p.UserId = u.Id

@@ -26,6 +26,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
+builder.Services.Configure<FileUploadOptions>(
+    builder.Configuration.GetSection(FileUploadOptions.SectionName));
+builder.Services.AddScoped<FileStorageService>();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<PostService>();
 
@@ -40,6 +43,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
