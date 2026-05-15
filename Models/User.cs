@@ -18,4 +18,6 @@ public partial class User
     public string? Gender { get; set; }
 
     public DateOnly? BirthDate { get; set; }
+
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 }
