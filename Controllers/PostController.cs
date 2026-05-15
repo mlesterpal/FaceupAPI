@@ -15,7 +15,8 @@ namespace Faceup.Controllers
             _postService = postService;
         }
 
-        public IActionResult AddNewPost(CreatePost post)
+        [HttpPost]
+        public IActionResult AddNewPost([FromBody] CreatePost post)
         {
             try
             {
@@ -27,8 +28,24 @@ namespace Faceup.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions and return an appropriate response
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error adding post: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUserPosts([FromQuery] int userId)
+        {
+            try
+            {
+                var posts = _postService.GetUserPosts(userId);
+                return Ok(new
+                {
+                    results = posts
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving posts: {ex.Message}");
             }
         }
     }
