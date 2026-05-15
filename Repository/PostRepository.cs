@@ -1,5 +1,8 @@
 ﻿using Faceup.Models;
 using Faceup.Models.Dto;
+using Faceup.Models.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace Faceup.Repository
 {
@@ -20,6 +23,15 @@ namespace Faceup.Repository
             };
             _context.Posts.Add(post);
             _context.SaveChanges();
+        }
+
+        public List<UserPostResponse> GetPostsByUserId(int userId)
+        {
+            return _context.Database
+                .SqlQueryRaw<UserPostResponse>(
+                    "EXEC dbo.usp_GetUserPosts @UserId",
+                    new SqlParameter("@UserId", userId))
+                .ToList();
         }
     }
 }

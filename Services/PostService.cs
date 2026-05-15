@@ -1,4 +1,5 @@
 ﻿using Faceup.Models.Dto;
+using Faceup.Models.Response;
 using Faceup.Repository;
 
 namespace Faceup.Services
@@ -15,6 +16,11 @@ namespace Faceup.Services
         public void AddPost(CreatePost post)
         {
             _postRepository.AddPost(post);
+        }
+
+        public List<UserPostResponse> GetUserPosts(int userId)
+        {
+            return _postRepository.GetPostsByUserId(userId);
         }
     }
 }
