@@ -31,6 +31,8 @@ builder.Services.Configure<FileUploadOptions>(
 builder.Services.AddScoped<FileStorageService>();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<FriendRepository>();
+builder.Services.AddScoped<FriendService>();
 
 var app = builder.Build();
 
