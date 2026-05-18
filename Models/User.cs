@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Faceup.Models;
@@ -18,6 +18,8 @@ public partial class User
     public string? Gender { get; set; }
 
     public DateOnly? BirthDate { get; set; }
+
+    public string? ProfilePicture { get; set; }
 
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 }
