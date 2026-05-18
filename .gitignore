@@ -3,3 +3,4 @@ obj/
 .vs/
 wwwroot/uploads/*
 !wwwroot/uploads/.gitkeep
+!wwwroot/uploads/profiles/.gitkeep

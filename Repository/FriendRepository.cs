@@ -17,40 +17,40 @@ public class FriendRepository
 
     public int SendFriendRequest(int requesterId, int receiverId)
     {
-        return ExecuteWithReturn(
-            "EXEC @ret = dbo.usp_SendFriendRequest @RequesterId, @ReceiverId",
+        return ExecuteStoredProcedure(
+            "EXEC dbo.usp_SendFriendRequest @RequesterId, @ReceiverId",
             new SqlParameter("@RequesterId", requesterId),
             new SqlParameter("@ReceiverId", receiverId));
     }
 
     public int AcceptFriendRequest(int friendshipId, int receiverId)
     {
-        return ExecuteWithReturn(
-            "EXEC @ret = dbo.usp_AcceptFriendRequest @FriendshipId, @ReceiverId",
+        return ExecuteStoredProcedure(
+            "EXEC dbo.usp_AcceptFriendRequest @FriendshipId, @ReceiverId",
             new SqlParameter("@FriendshipId", friendshipId),
             new SqlParameter("@ReceiverId", receiverId));
     }
 
     public int RejectFriendRequest(int friendshipId, int receiverId)
     {
-        return ExecuteWithReturn(
-            "EXEC @ret = dbo.usp_RejectFriendRequest @FriendshipId, @ReceiverId",
+        return ExecuteStoredProcedure(
+            "EXEC dbo.usp_RejectFriendRequest @FriendshipId, @ReceiverId",
             new SqlParameter("@FriendshipId", friendshipId),
             new SqlParameter("@ReceiverId", receiverId));
     }
 
     public int CancelFriendRequest(int friendshipId, int requesterId)
     {
-        return ExecuteWithReturn(
-            "EXEC @ret = dbo.usp_CancelFriendRequest @FriendshipId, @RequesterId",
+        return ExecuteStoredProcedure(
+            "EXEC dbo.usp_CancelFriendRequest @FriendshipId, @RequesterId",
             new SqlParameter("@FriendshipId", friendshipId),
             new SqlParameter("@RequesterId", requesterId));
     }
 
     public int RemoveFriend(int userId, int otherUserId)
     {
-        return ExecuteWithReturn(
-            "EXEC @ret = dbo.usp_RemoveFriend @UserId, @OtherUserId",
+        return ExecuteStoredProcedure(
+            "EXEC dbo.usp_RemoveFriend @UserId, @OtherUserId",
             new SqlParameter("@UserId", userId),
             new SqlParameter("@OtherUserId", otherUserId));
     }
@@ -91,18 +91,19 @@ public class FriendRepository
             .ToList();
     }
 
-    private int ExecuteWithReturn(string sql, params SqlParameter[] parameters)
+    private int ExecuteStoredProcedure(string sql, params SqlParameter[] parameters)
     {
-        var returnParam = new SqlParameter("@ret", SqlDbType.Int)
+        var returnParam = new SqlParameter
         {
+            SqlDbType = SqlDbType.Int,
             Direction = ParameterDirection.ReturnValue
         };
 
-        var allParams = new List<SqlParameter> { returnParam };
-        allParams.AddRange(parameters);
+        var sqlParams = new List<object> { returnParam };
+        sqlParams.AddRange(parameters);
 
-        _context.Database.ExecuteSqlRaw(sql, allParams);
+        _context.Database.ExecuteSqlRaw(sql, sqlParams);
 
-        return returnParam.Value is int code ? code : Convert.ToInt32(returnParam.Value);
+        return returnParam.Value == DBNull.Value ? -1 : Convert.ToInt32(returnParam.Value);
     }
 }

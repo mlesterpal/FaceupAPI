@@ -1,5 +1,24 @@
 @Faceup_HostAddress = http://localhost:5182
 
+### Get user profile
+GET {{Faceup_HostAddress}}/api/user/1
+Accept: application/json
+
+###
+
+### Upload profile picture
+POST {{Faceup_HostAddress}}/api/user/1/profile-picture
+Content-Type: multipart/form-data; boundary=----FaceupBoundary
+
+------FaceupBoundary
+Content-Disposition: form-data; name="image"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< ./wwwroot/uploads/.gitkeep
+------FaceupBoundary--
+
+###
+
 ### Get user posts
 GET {{Faceup_HostAddress}}/api/Post?userId=1
 Accept: application/json

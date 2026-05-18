@@ -1,36 +1,86 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Faceup.Models.Dto;
+﻿using Faceup.Models.Dto;
+using Faceup.Models.Response;
 using Faceup.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Faceup.Controllers
+namespace Faceup.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class UserController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase
-    {
-        private readonly UserService _userService;
+    private readonly UserService _userService;
 
-        public UserController(UserService userService)
+    public UserController(UserService userService)
+    {
+        _userService = userService;
+    }
+
+    [HttpGet("{userId}")]
+    public IActionResult GetUser(int userId)
+    {
+        try
         {
-            _userService = userService;
+            var user = _userService.GetUserProfile(userId);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error retrieving user: {ex.Message}");
+        }
+    }
+
+    [HttpPost("{userId}/profile-picture")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProfilePicture(
+        int userId,
+        [FromForm] IFormFile image,
+        CancellationToken cancellationToken)
+    {
+        if (image == null || image.Length == 0)
+        {
+            return BadRequest(new { message = "Image file is required." });
         }
 
-        public IActionResult AddNewUser(CreateUser user)
+        try
         {
-            try
-            {
-                _userService.AddUser(user);
-                return Ok(new
-                {
-                    message = "User added successfully",
-                });
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions and return an appropriate response
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error adding user: {ex.Message}");
-            }
+            var profilePictureUrl = await _userService.UpdateProfilePictureAsync(
+                userId,
+                image,
+                cancellationToken);
+
+            return Ok(new UploadProfilePictureResponse { ProfilePictureUrl = profilePictureUrl });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error uploading profile picture: {ex.Message}");
+        }
+    }
+
+    [HttpPost]
+    public IActionResult AddNewUser([FromBody] CreateUser user)
+    {
+        try
+        {
+            _userService.AddUser(user);
+            return Ok(new { message = "User added successfully" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error adding user: {ex.Message}");
         }
     }
 }
