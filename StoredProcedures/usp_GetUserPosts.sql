@@ -9,7 +9,8 @@ BEGIN
         p.Message,
         p.ImageUrl,
         u.FirstName,
-        u.ProfilePicture
+        u.ProfilePicture,
+        p.CreatedAt
     FROM dbo.Posts p
     INNER JOIN dbo.Users u ON p.UserId = u.Id
     WHERE u.Id = @UserId

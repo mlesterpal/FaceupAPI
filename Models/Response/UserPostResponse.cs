@@ -10,5 +10,7 @@ public class UserPostResponse
 
     public string? FirstName { get; set; }
 
-    public string? ProfilePicture { get; set; }     
+    public string? ProfilePicture { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

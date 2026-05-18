@@ -1,0 +1,3 @@
+-- Add CreatedAt Column
+ALTER TABLE dbo.Posts
+ADD CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE();
