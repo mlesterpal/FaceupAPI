@@ -50,7 +50,7 @@ namespace Faceup.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUserPosts([FromQuery] int userId)
+        public IActionResult GetUserPosts([FromQuery] int? userId = null)
         {
             try
             {
