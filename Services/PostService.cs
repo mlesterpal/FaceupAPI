@@ -17,7 +17,7 @@ namespace Faceup.Services
             _postRepository.AddPost(message, imageUrl);
         }
 
-        public List<UserPostResponse> GetUserPosts(int userId)
+        public List<UserPostResponse> GetUserPosts(int? userId)
         {
             return _postRepository.GetPostsByUserId(userId);
         }
