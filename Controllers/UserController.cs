@@ -83,4 +83,26 @@ public class UserController : ControllerBase
             return StatusCode(500, $"Error adding user: {ex.Message}");
         }
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _userService.LoginAsync(request, cancellationToken);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized(new { message = "Invalid password." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error logging in user: {ex.Message}");
+        }
+    }
 }
