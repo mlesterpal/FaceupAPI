@@ -33,6 +33,13 @@ public class UserRepository
         return _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == id);
     }
 
+    public User? GetUserByEmail(string email)
+    {
+        return _context.Users
+            .AsNoTracking()
+            .FirstOrDefault(u => u.Email != null && u.Email.ToLower() == email.ToLower());
+    }
+
     public void UpdateProfilePicture(int userId, string profilePicturePath)
     {
         var user = _context.Users.Find(userId);

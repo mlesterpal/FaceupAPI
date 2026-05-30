@@ -58,4 +58,26 @@ public class UserService
 
         return profilePictureUrl;
     }
+
+    public async Task<LoginUserResponse> LoginAsync(LoginUserRequest loginUserRequest, CancellationToken cancellationToken = default)
+    {
+        var user = _userRepository.GetUserByEmail(loginUserRequest.Email);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User {loginUserRequest.Email} not found.");
+        }
+
+        if (!string.Equals(user.Password, loginUserRequest.Password, StringComparison.Ordinal))
+        {
+            throw new UnauthorizedAccessException("Invalid password.");
+        }
+
+        return await Task.FromResult(new LoginUserResponse
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            ProfilePicture = user.ProfilePicture
+        });
+    }
 }
