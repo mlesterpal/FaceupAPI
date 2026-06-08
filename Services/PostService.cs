@@ -17,9 +17,23 @@ namespace Faceup.Services
             _postRepository.AddPost(message, imageUrl);
         }
 
-        public List<UserPostResponse> GetUserPosts(int? userId)
+        public List<UserPostResponse> GetUserPosts(int? userId, int? viewerUserId)
         {
-            return _postRepository.GetPostsByUserId(userId);
+            return _postRepository.GetPostsByUserId(userId, viewerUserId);
+        }
+
+        public TogglePostLikeResponse TogglePostLike(int postId, int userId)
+        {
+            var result = _postRepository.TogglePostLike(postId, userId);
+
+            return new TogglePostLikeResponse
+            {
+                PostId = postId,
+                UserId = userId,
+                Liked = result.Liked,
+                LikeCount = result.LikeCount,
+                Message = result.Liked ? "Post liked." : "Post unliked."
+            };
         }
     }
 }

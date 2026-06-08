@@ -50,11 +50,11 @@ namespace Faceup.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUserPosts([FromQuery] int? userId = null)
+        public IActionResult GetUserPosts([FromQuery] int? userId = null, [FromQuery] int? viewerUserId = null)
         {
             try
             {
-                var posts = _postService.GetUserPosts(userId);
+                var posts = _postService.GetUserPosts(userId, viewerUserId);
                 return Ok(new
                 {
                     results = posts
@@ -63,6 +63,29 @@ namespace Faceup.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving posts: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{postId}/like/toggle")]
+        public IActionResult TogglePostLike(int postId, [FromBody] TogglePostLikeRequest request)
+        {
+            try
+            {
+                if (request.UserId <= 0)
+                {
+                    return BadRequest(new { message = "UserId must be greater than zero." });
+                }
+
+                var result = _postService.TogglePostLike(postId, request.UserId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error toggling post like: {ex.Message}");
             }
         }
     }
