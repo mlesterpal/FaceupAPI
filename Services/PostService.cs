@@ -35,5 +35,19 @@ namespace Faceup.Services
                 Message = result.Liked ? "Post liked." : "Post unliked."
             };
         }
+
+        public TogglePostShareResponse TogglePostShare(int postId, int userId)
+        {
+            var result = _postRepository.TogglePostShare(postId, userId);
+
+            return new TogglePostShareResponse
+            {
+                PostId = postId,
+                UserId = userId,
+                IsShared = result.Shared,
+                ShareCount = result.ShareCount,
+                Message = result.Shared ? "Post shared successfully." : "Post unshared successfully."
+            };
+        }
     }
 }

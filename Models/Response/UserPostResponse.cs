@@ -19,4 +19,8 @@ public class UserPostResponse
     public int LikeCount { get; set; }
 
     public bool IsLiked { get; set; }
+
+    public int ShareCount { get; set; }
+
+    public bool IsShared { get; set; }
 }
