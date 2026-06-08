@@ -3,21 +3,17 @@ using System.Collections.Generic;
 
 namespace Faceup.Models;
 
-public partial class Post
+public partial class Like
 {
     public int Id { get; set; }
 
-    public string? Message { get; set; }
+    public int PostId { get; set; }
 
     public int UserId { get; set; }
 
-    public string? ImageUrl { get; set; }
-
     public DateTime CreatedAt { get; set; }
 
-    public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
-
-    public virtual Share? Share { get; set; }
+    public virtual Post Post { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

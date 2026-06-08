@@ -93,5 +93,53 @@ namespace Faceup.Repository
             return (!likeExists, likeCount);
         }
 
+        public (bool Shared, int ShareCount) TogglePostShare(int postId, int userId)
+        {
+            if (!_context.Posts.Any(p => p.Id == postId))
+            {
+                throw new KeyNotFoundException("Post not found.");
+            }
+            
+            if (!_context.Users.Any(u => u.Id == userId))
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            var postIdParam = new SqlParameter("@PostId", postId);
+            var userIdParam = new SqlParameter("@UserId", userId);
+            
+            var shareExists = _context.Database
+                .SqlQueryRaw<int>(
+                    "SELECT COUNT(1) FROM dbo.Shares WHERE PostId = @PostId AND UserId = @UserId",
+                    postIdParam,
+                    userIdParam)
+                .AsEnumerable()
+                .FirstOrDefault() > 0;
+                
+                if (shareExists)
+                {
+                    _context.Database.ExecuteSqlRaw(
+                        "DELETE FROM dbo.Shares WHERE PostId = @PostId AND UserId = @UserId",
+                        postIdParam,
+                        userIdParam);
+                }
+                else
+                {
+                    _context.Database.ExecuteSqlRaw(
+                        "INSERT INTO dbo.Shares (PostId, UserId) VALUES (@PostId, @UserId)",
+                        postIdParam,
+                        userIdParam);
+                }
+
+                var shareCount = _context.Database
+                .SqlQueryRaw<int>(
+                    "SELECT COUNT(1) FROM dbo.Shares WHERE PostId = @PostId",
+                    postIdParam)
+                .AsEnumerable()
+                .FirstOrDefault();
+
+                return (!shareExists, shareCount);
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Faceup.Models;
@@ -21,5 +21,13 @@ public partial class User
 
     public string? ProfilePicture { get; set; }
 
+    public virtual ICollection<Friendship> FriendshipReceivers { get; set; } = new List<Friendship>();
+
+    public virtual ICollection<Friendship> FriendshipRequesters { get; set; } = new List<Friendship>();
+
+    public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+
+    public virtual ICollection<Share> Shares { get; set; } = new List<Share>();
 }

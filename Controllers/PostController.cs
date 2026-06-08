@@ -88,5 +88,28 @@ namespace Faceup.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error toggling post like: {ex.Message}");
             }
         }
+
+        [HttpPost("{postId}/share/toggle")]
+        public IActionResult TogglePostShare(int postId, [FromBody] TogglePostShareRequest request)
+        {
+            try
+            {
+                if (request.UserId <= 0)
+                {
+                    return BadRequest(new { message = "UserId must be greater than zero." });
+                }
+
+                var result = _postService.TogglePostShare(postId, request.UserId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error toggling post share: {ex.Message}");
+            }
+        }
     }
 }
