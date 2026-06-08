@@ -141,5 +141,28 @@ namespace Faceup.Repository
                 return (!shareExists, shareCount);
         }
 
+        public bool DeleteUserPost(int postId, int userId)
+        {
+            var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
+            if (post is null)
+            {
+                throw new KeyNotFoundException("Post not found.");
+            }
+
+            if (!_context.Users.Any(u => u.Id == userId))
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            if (post.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only delete your own posts.");
+            }
+
+            _context.Posts.Remove(post);
+            _context.SaveChanges();
+            return true;
+        }
+
     }
 }

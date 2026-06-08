@@ -111,5 +111,32 @@ namespace Faceup.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error toggling post share: {ex.Message}");
             }
         }
+
+        [HttpDelete("{postId}")]
+        public IActionResult DeleteUserPost(int postId, [FromBody] DeleteUserPostRequest request)
+        {
+            try
+            {
+                if (request.UserId <= 0)
+                {
+                    return BadRequest(new { message = "UserId must be greater than zero." });
+                }
+
+                var result = _postService.DeleteUserPost(postId, request.UserId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting post: {ex.Message}");
+            }
+        }
     }
 }
