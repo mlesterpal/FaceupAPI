@@ -49,5 +49,18 @@ namespace Faceup.Services
                 Message = result.Shared ? "Post shared successfully." : "Post unshared successfully."
             };
         }
+
+        public DeleteUserPostResponse DeleteUserPost(int postId, int userId)
+        {
+            var deleted = _postRepository.DeleteUserPost(postId, userId);
+
+            return new DeleteUserPostResponse
+            {
+                PostId = postId,
+                UserId = userId,
+                Deleted = deleted,
+                Message = "Post deleted successfully."
+            };
+        }
     }
 }
