@@ -27,6 +27,11 @@ namespace Faceup.Services
             return _postRepository.GetPostLikes(postId);
         }
 
+        public List<PostCommentUserResponse> GetPostComments(int postId)
+        {
+            return _postRepository.GetPostComments(postId);
+        }
+
         public TogglePostLikeResponse TogglePostLike(int postId, int userId)
         {
             var result = _postRepository.TogglePostLike(postId, userId);
@@ -67,5 +72,7 @@ namespace Faceup.Services
                 Message = "Post deleted successfully."
             };
         }
+
+
     }
 }

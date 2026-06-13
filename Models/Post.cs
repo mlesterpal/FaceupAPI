@@ -15,6 +15,8 @@ public partial class Post
 
     public DateTime CreatedAt { get; set; }
 
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
 
     public virtual Share? Share { get; set; }
