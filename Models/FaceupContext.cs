@@ -15,6 +15,8 @@ public partial class FaceupContext : DbContext
     {
     }
 
+    public virtual DbSet<Comment> Comments { get; set; }
+
     public virtual DbSet<Friendship> Friendships { get; set; }
 
     public virtual DbSet<Like> Likes { get; set; }
@@ -27,6 +29,26 @@ public partial class FaceupContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Comments__3214EC07D1F711F7");
+
+            entity.HasIndex(e => e.PostId, "IX_Comments_PostId");
+
+            entity.HasIndex(e => new { e.PostId, e.UserId }, "IX_Comments_PostId_UserId").IsUnique();
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.PostId)
+                .HasConstraintName("FK_Comments_Posts");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Comments_Users");
+        });
+
         modelBuilder.Entity<Friendship>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Friendsh__3214EC07529B2CA5");

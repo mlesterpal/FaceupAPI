@@ -21,6 +21,8 @@ public partial class User
 
     public string? ProfilePicture { get; set; }
 
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     public virtual ICollection<Friendship> FriendshipReceivers { get; set; } = new List<Friendship>();
 
     public virtual ICollection<Friendship> FriendshipRequesters { get; set; } = new List<Friendship>();
