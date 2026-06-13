@@ -66,6 +66,27 @@ namespace Faceup.Controllers
             }
         }
 
+        [HttpGet("{postId}/likes")]
+        public IActionResult GetPostLikes(int postId)
+        {
+            try
+            {
+                var likes = _postService.GetPostLikes(postId);
+                return Ok(new
+                {
+                    results = likes
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving post likes: {ex.Message}");
+            }
+        }
+
         [HttpPost("{postId}/like/toggle")]
         public IActionResult TogglePostLike(int postId, [FromBody] TogglePostLikeRequest request)
         {

@@ -45,6 +45,22 @@ namespace Faceup.Repository
                 .ToList();
         }
 
+        public List<PostLikeUserResponse> GetPostLikes(int postId)
+        {
+            if (!_context.Posts.Any(p => p.Id == postId))
+            {
+                throw new KeyNotFoundException("Post not found.");
+            }
+
+            var postIdParam = new SqlParameter("@PostId", postId);
+
+            return _context.Database
+                .SqlQueryRaw<PostLikeUserResponse>(
+                    "EXEC dbo.usp_GetPostLikes @PostId",
+                    postIdParam)
+                .ToList();
+        }
+
         public (bool Liked, int LikeCount) TogglePostLike(int postId, int userId)
         {
             if (!_context.Posts.Any(p => p.Id == postId))
