@@ -22,6 +22,11 @@ namespace Faceup.Services
             return _postRepository.GetPostsByUserId(userId, viewerUserId);
         }
 
+        public List<PostLikeUserResponse> GetPostLikes(int postId)
+        {
+            return _postRepository.GetPostLikes(postId);
+        }
+
         public TogglePostLikeResponse TogglePostLike(int postId, int userId)
         {
             var result = _postRepository.TogglePostLike(postId, userId);

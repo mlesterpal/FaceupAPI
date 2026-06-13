@@ -14,7 +14,7 @@ BEGIN
         p.CreatedAt,
         u.Id AS UserId,
         COUNT(l.Id) AS LikeCount,
-        CAST(MAX(CASE WHEN l.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsLiked
+        CAST(MAX(CASE WHEN l.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsLiked,
         COUNT(s.Id) AS ShareCount,
         CAST(MAX(CASE WHEN s.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsShared
     FROM dbo.Posts p
