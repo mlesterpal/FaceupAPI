@@ -77,6 +77,29 @@ namespace Faceup.Repository
                 .ToList();
         }
 
+        public void AddPostComment(int postId, int userId, string comment)
+        {
+            if (!_context.Posts.Any(p => p.Id == postId))
+            {
+                throw new KeyNotFoundException("Post not found.");
+            }
+
+            if (!_context.Users.Any(u => u.Id == userId))
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            var newComment = new Comment
+            {
+                PostId = postId,
+                UserId = userId,
+                Content = comment,
+            };
+
+            _context.Comments.Add(newComment);
+            _context.SaveChanges();
+        }
+
 
         public (bool Liked, int LikeCount) TogglePostLike(int postId, int userId)
         {

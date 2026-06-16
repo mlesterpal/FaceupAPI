@@ -35,8 +35,6 @@ public partial class FaceupContext : DbContext
 
             entity.HasIndex(e => e.PostId, "IX_Comments_PostId");
 
-            entity.HasIndex(e => new { e.PostId, e.UserId }, "IX_Comments_PostId_UserId").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
 
             entity.HasOne(d => d.Post).WithMany(p => p.Comments)
