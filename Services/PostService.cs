@@ -32,6 +32,16 @@ namespace Faceup.Services
             return _postRepository.GetPostComments(postId);
         }
 
+        public CreatePostCommentResponse AddPostComment(int postId, int userId, string comment)
+        {
+            _postRepository.AddPostComment(postId, userId, comment);
+
+            return new CreatePostCommentResponse
+            {
+                Message = "Comment added successfully."
+            };
+        }
+
         public TogglePostLikeResponse TogglePostLike(int postId, int userId)
         {
             var result = _postRepository.TogglePostLike(postId, userId);

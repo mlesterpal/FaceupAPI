@@ -105,6 +105,34 @@ namespace Faceup.Controllers
             }
         }
 
+        [HttpPost("{postId}/comments")]
+        public IActionResult CreatePostComment(int postId, [FromBody] CreatePostCommentRequest request)
+        {
+            try
+            {
+                if (request.UserId <= 0)
+                {
+                    return BadRequest(new { message = "UserId must be greater than zero." });
+                }
+
+                if (string.IsNullOrWhiteSpace(request.Comment))
+                {
+                    return BadRequest(new { message = "Comment cannot be empty." });
+                }
+
+                var result = _postService.AddPostComment(postId, request.UserId, request.Comment.Trim());
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error creating post comment: {ex.Message}");
+            }
+        }
+
         [HttpPost("{postId}/like/toggle")]
         public IActionResult TogglePostLike(int postId, [FromBody] TogglePostLikeRequest request)
         {
