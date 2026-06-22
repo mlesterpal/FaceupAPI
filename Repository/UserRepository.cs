@@ -51,4 +51,23 @@ public class UserRepository
         user.ProfilePicture = profilePicturePath;
         _context.SaveChanges();
     }
+
+    public void UpdateProfile(int userId, UpdateUserProfileRequest request)
+    {
+        var user = _context.Users.Find(userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User {userId} not found.");
+        }
+
+        user.Bio = request.Bio;
+        user.Address = request.Address;
+        user.Work = request.Work;
+        user.HighSchool = request.HighSchool;
+        user.College = request.College;
+        user.Hobbies = request.Hobbies;
+        user.Phone = request.Phone;
+
+        _context.SaveChanges();
+    }
 }

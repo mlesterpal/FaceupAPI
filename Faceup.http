@@ -6,6 +6,22 @@ Accept: application/json
 
 ###
 
+### Update user profile details
+PUT {{Faceup_HostAddress}}/api/user/1/profile
+Content-Type: application/json
+
+{
+  "bio": "Coffee lover and weekend runner.",
+  "address": "123 Main St",
+  "work": "Software Engineer",
+  "highSchool": "Central High",
+  "college": "State University",
+  "hobbies": "Running, Reading",
+  "phone": "+63-912-345-6789"
+}
+
+###
+
 ### Upload profile picture
 POST {{Faceup_HostAddress}}/api/user/1/profile-picture
 Content-Type: multipart/form-data; boundary=----FaceupBoundary

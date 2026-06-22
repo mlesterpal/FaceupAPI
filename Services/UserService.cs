@@ -33,7 +33,17 @@ public class UserService
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            ProfilePicture = user.ProfilePicture
+            ProfilePicture = user.ProfilePicture,
+            Email = user.Email,
+            Gender = user.Gender,
+            BirthDate = user.BirthDate,
+            Bio = user.Bio,
+            Address = user.Address,
+            Work = user.Work,
+            HighSchool = user.HighSchool,
+            College = user.College,
+            Hobbies = user.Hobbies,
+            Phone = user.Phone
         };
     }
 
@@ -57,6 +67,20 @@ public class UserService
         _userRepository.UpdateProfilePicture(userId, profilePictureUrl);
 
         return profilePictureUrl;
+    }
+
+    public UserProfileResponse UpdateUserProfile(int userId, UpdateUserProfileRequest request)
+    {
+        var user = _userRepository.GetUserById(userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User {userId} not found.");
+        }
+
+        _userRepository.UpdateProfile(userId, request);
+
+        return GetUserProfile(userId)
+            ?? throw new KeyNotFoundException($"User {userId} not found.");
     }
 
     public async Task<LoginUserResponse> LoginAsync(LoginUserRequest loginUserRequest, CancellationToken cancellationToken = default)

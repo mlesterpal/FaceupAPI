@@ -21,6 +21,20 @@ public partial class User
 
     public string? ProfilePicture { get; set; }
 
+    public string? Bio { get; set; }
+
+    public string? Address { get; set; }
+
+    public string? Work { get; set; }
+
+    public string? HighSchool { get; set; }
+
+    public string? College { get; set; }
+
+    public string? Hobbies { get; set; }
+
+    public string? Phone { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Friendship> FriendshipReceivers { get; set; } = new List<Friendship>();
