@@ -70,6 +70,29 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPut("{userId}/profile")]
+    public IActionResult UpdateProfile(int userId, [FromBody] UpdateUserProfileRequest request)
+    {
+        if (request == null)
+        {
+            return BadRequest(new { message = "Profile payload is required." });
+        }
+
+        try
+        {
+            var updatedUser = _userService.UpdateUserProfile(userId, request);
+            return Ok(updatedUser);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating user profile: {ex.Message}");
+        }
+    }
+
     [HttpPost]
     public IActionResult AddNewUser([FromBody] CreateUser user)
     {

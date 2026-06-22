@@ -1,0 +1,9 @@
+ALTER TABLE dbo.Users
+ADD
+    Bio NVARCHAR(1000) NULL,
+    Address NVARCHAR(500) NULL,
+    Work NVARCHAR(200) NULL,
+    HighSchool NVARCHAR(200) NULL,
+    College NVARCHAR(200) NULL,
+    Hobbies NVARCHAR(500) NULL,
+    Phone NVARCHAR(20) NULL;

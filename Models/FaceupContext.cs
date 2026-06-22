@@ -130,12 +130,19 @@ public partial class FaceupContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07E43FC93C");
 
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.Bio).HasMaxLength(1000);
+            entity.Property(e => e.College).HasMaxLength(200);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.Gender).HasMaxLength(20);
+            entity.Property(e => e.HighSchool).HasMaxLength(200);
+            entity.Property(e => e.Hobbies).HasMaxLength(500);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.Password).HasMaxLength(255);
+            entity.Property(e => e.Phone).HasMaxLength(20);
             entity.Property(e => e.ProfilePicture).HasMaxLength(500);
+            entity.Property(e => e.Work).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);
