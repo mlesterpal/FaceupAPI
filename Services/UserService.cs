@@ -69,7 +69,10 @@ public class UserService
         return profilePictureUrl;
     }
 
-    public UserProfileResponse UpdateUserProfile(int userId, UpdateUserProfileRequest request)
+    public UserProfileResponse UpdateUserProfile(
+        int userId,
+        UpdateUserProfileRequest request,
+        ISet<string> presentFields)
     {
         var user = _userRepository.GetUserById(userId);
         if (user == null)
@@ -77,7 +80,7 @@ public class UserService
             throw new KeyNotFoundException($"User {userId} not found.");
         }
 
-        _userRepository.UpdateProfile(userId, request);
+        _userRepository.UpdateProfile(userId, request, presentFields);
 
         return GetUserProfile(userId)
             ?? throw new KeyNotFoundException($"User {userId} not found.");
