@@ -52,7 +52,7 @@ public class UserRepository
         _context.SaveChanges();
     }
 
-    public void UpdateProfile(int userId, UpdateUserProfileRequest request)
+    public void UpdateProfile(int userId, UpdateUserProfileRequest request, ISet<string> presentFields)
     {
         var user = _context.Users.Find(userId);
         if (user == null)
@@ -60,13 +60,40 @@ public class UserRepository
             throw new KeyNotFoundException($"User {userId} not found.");
         }
 
-        user.Bio = request.Bio;
-        user.Address = request.Address;
-        user.Work = request.Work;
-        user.HighSchool = request.HighSchool;
-        user.College = request.College;
-        user.Hobbies = request.Hobbies;
-        user.Phone = request.Phone;
+        if (presentFields.Contains("bio"))
+        {
+            user.Bio = request.Bio;
+        }
+
+        if (presentFields.Contains("address"))
+        {
+            user.Address = request.Address;
+        }
+
+        if (presentFields.Contains("work"))
+        {
+            user.Work = request.Work;
+        }
+
+        if (presentFields.Contains("highSchool"))
+        {
+            user.HighSchool = request.HighSchool;
+        }
+
+        if (presentFields.Contains("college"))
+        {
+            user.College = request.College;
+        }
+
+        if (presentFields.Contains("hobbies"))
+        {
+            user.Hobbies = request.Hobbies;
+        }
+
+        if (presentFields.Contains("phone"))
+        {
+            user.Phone = request.Phone;
+        }
 
         _context.SaveChanges();
     }

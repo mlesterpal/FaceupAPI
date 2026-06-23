@@ -2,6 +2,7 @@
 using Faceup.Models.Response;
 using Faceup.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Faceup.Controllers;
 
@@ -71,16 +72,33 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{userId}/profile")]
-    public IActionResult UpdateProfile(int userId, [FromBody] UpdateUserProfileRequest request)
+    public IActionResult UpdateProfile(int userId, [FromBody] JsonElement requestBody)
     {
-        if (request == null)
+        if (requestBody.ValueKind != JsonValueKind.Object)
         {
             return BadRequest(new { message = "Profile payload is required." });
         }
 
         try
         {
-            var updatedUser = _userService.UpdateUserProfile(userId, request);
+            var request = JsonSerializer.Deserialize<UpdateUserProfileRequest>(
+                requestBody.GetRawText(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            if (request == null)
+            {
+                return BadRequest(new { message = "Profile payload is required." });
+            }
+
+            var presentFields = requestBody
+                .EnumerateObject()
+                .Select(property => property.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var updatedUser = _userService.UpdateUserProfile(userId, request, presentFields);
             return Ok(updatedUser);
         }
         catch (KeyNotFoundException)
