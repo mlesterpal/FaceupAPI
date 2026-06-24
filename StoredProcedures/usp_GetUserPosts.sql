@@ -16,11 +16,13 @@ BEGIN
         COUNT(l.Id) AS LikeCount,
         CAST(MAX(CASE WHEN l.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsLiked,
         COUNT(s.Id) AS ShareCount,
-        CAST(MAX(CASE WHEN s.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsShared
+        CAST(MAX(CASE WHEN s.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsShared,
+        COUNT(c.Id) AS CommentCount
     FROM dbo.Posts p
     INNER JOIN dbo.Users u ON p.UserId = u.Id
     LEFT JOIN dbo.Likes l ON l.PostId = p.Id
     LEFT JOIN dbo.Shares s ON s.PostId = p.Id
+    LEFT JOIN dbo.Comments c ON c.PostId = p.Id
     WHERE (@UserId IS NULL OR @UserId = 0 OR u.Id = @UserId)
     GROUP BY
         p.Id,
