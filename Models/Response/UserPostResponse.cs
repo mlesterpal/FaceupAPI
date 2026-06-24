@@ -23,4 +23,6 @@ public class UserPostResponse
     public int ShareCount { get; set; }
 
     public bool IsShared { get; set; }
+
+    public int CommentCount { get; set; }
 }
