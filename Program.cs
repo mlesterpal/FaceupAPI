@@ -33,6 +33,8 @@ builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<FriendRepository>();
 builder.Services.AddScoped<FriendService>();
+builder.Services.AddScoped<NotificationRepository>();
+builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
 

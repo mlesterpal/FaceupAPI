@@ -91,6 +91,20 @@ public class FriendRepository
             .ToList();
     }
 
+    public (int RequesterId, int ReceiverId) GetFriendshipParticipants(int friendshipId)
+    {
+        var friendship = _context.Friendships
+            .AsNoTracking()
+            .FirstOrDefault(f => f.Id == friendshipId);
+
+        if (friendship == null)
+        {
+            throw new KeyNotFoundException("Friend request not found.");
+        }
+
+        return (friendship.RequesterId, friendship.ReceiverId);
+    }
+
     private int ExecuteStoredProcedure(string sql, params SqlParameter[] parameters)
     {
         var returnParam = new SqlParameter

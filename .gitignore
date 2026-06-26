@@ -4,3 +4,4 @@ obj/
 wwwroot/uploads/*
 !wwwroot/uploads/.gitkeep
 !wwwroot/uploads/profiles/.gitkeep
+/temp_build_notifications
