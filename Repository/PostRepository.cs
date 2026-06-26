@@ -220,5 +220,20 @@ namespace Faceup.Repository
             return true;
         }
 
+        public int GetPostOwnerUserId(int postId)
+        {
+            var ownerId = _context.Posts
+                .Where(p => p.Id == postId)
+                .Select(p => p.UserId)
+                .FirstOrDefault();
+
+            if (ownerId <= 0)
+            {
+                throw new KeyNotFoundException("Post not found.");
+            }
+
+            return ownerId;
+        }
+
     }
 }

@@ -13,11 +13,11 @@ BEGIN
         u.ProfilePicture,
         p.CreatedAt,
         u.Id AS UserId,
-        COUNT(l.Id) AS LikeCount,
+        COUNT(DISTINCT l.Id) AS LikeCount,
         CAST(MAX(CASE WHEN l.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsLiked,
-        COUNT(s.Id) AS ShareCount,
+        COUNT(DISTINCT s.Id) AS ShareCount,
         CAST(MAX(CASE WHEN s.UserId = @ViewerUserId THEN 1 ELSE 0 END) AS bit) AS IsShared,
-        COUNT(c.Id) AS CommentCount
+        COUNT(DISTINCT c.Id) AS CommentCount
     FROM dbo.Posts p
     INNER JOIN dbo.Users u ON p.UserId = u.Id
     LEFT JOIN dbo.Likes l ON l.PostId = p.Id

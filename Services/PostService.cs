@@ -1,4 +1,5 @@
-﻿using Faceup.Models.Response;
+﻿using Faceup.Models.Dto;
+using Faceup.Models.Response;
 using Faceup.Repository;
 
 namespace Faceup.Services
@@ -6,10 +7,12 @@ namespace Faceup.Services
     public class PostService
     {
         private readonly PostRepository _postRepository;
+        private readonly NotificationService _notificationService;
 
-        public PostService(PostRepository postRepository)
+        public PostService(PostRepository postRepository, NotificationService notificationService)
         {
             _postRepository = postRepository;
+            _notificationService = notificationService;
         }
 
         public void AddPost(string? message, string? imageUrl)
@@ -35,6 +38,15 @@ namespace Faceup.Services
         public CreatePostCommentResponse AddPostComment(int postId, int userId, string comment)
         {
             _postRepository.AddPostComment(postId, userId, comment);
+            var postOwnerUserId = _postRepository.GetPostOwnerUserId(postId);
+
+            _notificationService.CreateNotification(new CreateNotificationRequest
+            {
+                RecipientUserId = postOwnerUserId,
+                ActorUserId = userId,
+                Type = "PostComment",
+                RelatedEntityId = postId
+            });
 
             return new CreatePostCommentResponse
             {
@@ -45,6 +57,19 @@ namespace Faceup.Services
         public TogglePostLikeResponse TogglePostLike(int postId, int userId)
         {
             var result = _postRepository.TogglePostLike(postId, userId);
+
+            if (result.Liked)
+            {
+                var postOwnerUserId = _postRepository.GetPostOwnerUserId(postId);
+                _notificationService.CreateNotification(new CreateNotificationRequest
+                {
+                    RecipientUserId = postOwnerUserId,
+                    ActorUserId = userId,
+                    Type = "PostLike",
+                    RelatedEntityType = "Post",
+                    RelatedEntityId = postId
+                });
+            }
 
             return new TogglePostLikeResponse
             {
@@ -59,6 +84,18 @@ namespace Faceup.Services
         public TogglePostShareResponse TogglePostShare(int postId, int userId)
         {
             var result = _postRepository.TogglePostShare(postId, userId);
+
+            if (result.Shared)
+            {
+                var postOwnerUserId = _postRepository.GetPostOwnerUserId(postId);
+                _notificationService.CreateNotification(new CreateNotificationRequest
+                {
+                    RecipientUserId = postOwnerUserId,
+                    ActorUserId = userId,
+                    Type = "PostShare",
+                    RelatedEntityId = postId
+                });
+            }
 
             return new TogglePostShareResponse
             {

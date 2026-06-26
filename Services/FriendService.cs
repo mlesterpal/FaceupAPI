@@ -1,3 +1,4 @@
+using Faceup.Models.Dto;
 using Faceup.Models.Response;
 using Faceup.Repository;
 
@@ -6,17 +7,48 @@ namespace Faceup.Services;
 public class FriendService
 {
     private readonly FriendRepository _friendRepository;
+    private readonly NotificationService _notificationService;
 
-    public FriendService(FriendRepository friendRepository)
+    public FriendService(FriendRepository friendRepository, NotificationService notificationService)
     {
         _friendRepository = friendRepository;
+        _notificationService = notificationService;
     }
 
-    public int SendFriendRequest(int requesterId, int receiverId) =>
-        _friendRepository.SendFriendRequest(requesterId, receiverId);
+    public int SendFriendRequest(int requesterId, int receiverId)
+    {
+        var resultCode = _friendRepository.SendFriendRequest(requesterId, receiverId);
+        if (resultCode == 0)
+        {
+            _notificationService.CreateNotification(new CreateNotificationRequest
+            {
+                RecipientUserId = receiverId,
+                ActorUserId = requesterId,
+                Type = "FriendRequestSent"
+            });
+        }
 
-    public int AcceptFriendRequest(int friendshipId, int receiverId) =>
-        _friendRepository.AcceptFriendRequest(friendshipId, receiverId);
+        return resultCode;
+    }
+
+    public int AcceptFriendRequest(int friendshipId, int receiverId)
+    {
+        var friendshipParticipants = _friendRepository.GetFriendshipParticipants(friendshipId);
+        var resultCode = _friendRepository.AcceptFriendRequest(friendshipId, receiverId);
+
+        if (resultCode == 0)
+        {
+            _notificationService.CreateNotification(new CreateNotificationRequest
+            {
+                RecipientUserId = friendshipParticipants.RequesterId,
+                ActorUserId = receiverId,
+                Type = "FriendRequestAccepted",
+                RelatedEntityId = friendshipId
+            });
+        }
+
+        return resultCode;
+    }
 
     public int RejectFriendRequest(int friendshipId, int receiverId) =>
         _friendRepository.RejectFriendRequest(friendshipId, receiverId);
