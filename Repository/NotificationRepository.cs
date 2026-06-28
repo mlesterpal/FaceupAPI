@@ -75,4 +75,31 @@ public class NotificationRepository
                 userIdParam)
             .ToList();
     }
+
+    public bool MarkAsRead(int notificationId, int userId)
+    {
+        var affectedRows = _context.Database.ExecuteSqlRaw(
+            @"UPDATE dbo.Notifications
+              SET IsRead = 1
+              WHERE Id = @NotificationId
+                AND RecipientUserId = @UserId
+                AND IsRead = 0",
+            new SqlParameter("@NotificationId", notificationId),
+            new SqlParameter("@UserId", userId));
+
+        if (affectedRows > 0)
+        {
+            return true;
+        }
+
+        var existsForUser = _context.Database
+            .SqlQueryRaw<int>(
+                "SELECT COUNT(1) FROM dbo.Notifications WHERE Id = @NotificationId AND RecipientUserId = @UserId",
+                new SqlParameter("@NotificationId", notificationId),
+                new SqlParameter("@UserId", userId))
+            .AsEnumerable()
+            .FirstOrDefault() > 0;
+
+        return existsForUser;
+    }
 }
