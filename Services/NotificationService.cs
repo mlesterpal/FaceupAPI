@@ -61,6 +61,33 @@ public class NotificationService
         return _notificationRepository.GetNotificationsByRecipientUserId(userId);
     }
 
+    public MarkNotificationReadResponse MarkNotificationAsRead(int notificationId, int userId)
+    {
+        if (notificationId <= 0)
+        {
+            throw new ArgumentException("NotificationId must be greater than zero.");
+        }
+
+        if (userId <= 0)
+        {
+            throw new ArgumentException("UserId must be greater than zero.");
+        }
+
+        var markedAsRead = _notificationRepository.MarkAsRead(notificationId, userId);
+        if (!markedAsRead)
+        {
+            throw new KeyNotFoundException("Notification not found for this user.");
+        }
+
+        return new MarkNotificationReadResponse
+        {
+            NotificationId = notificationId,
+            UserId = userId,
+            MarkedAsRead = true,
+            Message = "Notification marked as read."
+        };
+    }
+
     private static string BuildMessage(string type, string actorDisplayName)
     {
         if (!NotificationMessageTemplates.TryGetValue(type, out var templateBuilder))
