@@ -1,5 +1,6 @@
 ﻿using Faceup.Models;
 using Faceup.Models.Dto;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Faceup.Repository;
@@ -7,6 +8,19 @@ namespace Faceup.Repository;
 public class UserRepository
 {
     private readonly FaceupContext _context;
+    private static readonly ISet<string> SupportedVisibilityFields =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "bio",
+            "address",
+            "work",
+            "highSchool",
+            "college",
+            "hobbies",
+            "phone",
+            "gender",
+            "birthDate",
+        };
 
     public UserRepository(FaceupContext context)
     {
@@ -96,5 +110,39 @@ public class UserRepository
         }
 
         _context.SaveChanges();
+    }
+
+    public bool IsSupportedVisibilityField(string fieldName)
+    {
+        return SupportedVisibilityFields.Contains(fieldName);
+    }
+
+    public bool UpdateProfileFieldVisibility(int userId, string fieldName, string visibility)
+    {
+        var sql = fieldName.ToLowerInvariant() switch
+        {
+            "bio" => "UPDATE dbo.Users SET BioVisibility = @Visibility WHERE Id = @UserId",
+            "address" => "UPDATE dbo.Users SET AddressVisibility = @Visibility WHERE Id = @UserId",
+            "work" => "UPDATE dbo.Users SET WorkVisibility = @Visibility WHERE Id = @UserId",
+            "highschool" => "UPDATE dbo.Users SET HighSchoolVisibility = @Visibility WHERE Id = @UserId",
+            "college" => "UPDATE dbo.Users SET CollegeVisibility = @Visibility WHERE Id = @UserId",
+            "hobbies" => "UPDATE dbo.Users SET HobbiesVisibility = @Visibility WHERE Id = @UserId",
+            "phone" => "UPDATE dbo.Users SET PhoneVisibility = @Visibility WHERE Id = @UserId",
+            "gender" => "UPDATE dbo.Users SET GenderVisibility = @Visibility WHERE Id = @UserId",
+            "birthdate" => "UPDATE dbo.Users SET BirthDateVisibility = @Visibility WHERE Id = @UserId",
+            _ => null
+        };
+
+        if (string.IsNullOrWhiteSpace(sql))
+        {
+            throw new ArgumentException("Unsupported profile field.");
+        }
+
+        var affectedRows = _context.Database.ExecuteSqlRaw(
+            sql,
+            new SqlParameter("@Visibility", visibility),
+            new SqlParameter("@UserId", userId));
+
+        return affectedRows > 0;
     }
 }
