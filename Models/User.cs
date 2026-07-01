@@ -35,6 +35,24 @@ public partial class User
 
     public string? Phone { get; set; }
 
+    public string? BioVisibility { get; set; }
+
+    public string? AddressVisibility { get; set; }
+
+    public string? WorkVisibility { get; set; }
+
+    public string? HighSchoolVisibility { get; set; }
+
+    public string? CollegeVisibility { get; set; }
+
+    public string? HobbiesVisibility { get; set; }
+
+    public string? PhoneVisibility { get; set; }
+
+    public string? GenderVisibility { get; set; }
+
+    public string? BirthDateVisibility { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Friendship> FriendshipReceivers { get; set; } = new List<Friendship>();

@@ -43,7 +43,16 @@ public class UserService
             HighSchool = user.HighSchool,
             College = user.College,
             Hobbies = user.Hobbies,
-            Phone = user.Phone
+            Phone = user.Phone,
+            BioVisibility = user.BioVisibility,
+            AddressVisibility = user.AddressVisibility,
+            WorkVisibility = user.WorkVisibility,
+            HighSchoolVisibility = user.HighSchoolVisibility,
+            CollegeVisibility = user.CollegeVisibility,
+            HobbiesVisibility = user.HobbiesVisibility,
+            PhoneVisibility = user.PhoneVisibility,
+            GenderVisibility = user.GenderVisibility,
+            BirthDateVisibility = user.BirthDateVisibility
         };
     }
 
@@ -84,6 +93,60 @@ public class UserService
 
         return GetUserProfile(userId)
             ?? throw new KeyNotFoundException($"User {userId} not found.");
+    }
+
+    public UpdateProfileFieldVisibilityResponse UpdateProfileFieldVisibility(
+        int userId,
+        string fieldName,
+        string visibility)
+    {
+        if (userId <= 0)
+        {
+            throw new ArgumentException("UserId must be greater than zero.");
+        }
+
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("FieldName is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(visibility))
+        {
+            throw new ArgumentException("Visibility is required.");
+        }
+
+        var normalizedFieldName = fieldName.Trim();
+        var normalizedVisibility = visibility.Trim();
+
+        if (!string.Equals(normalizedVisibility, "Public", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(normalizedVisibility, "Private", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException("Visibility must be either Public or Private.");
+        }
+
+        if (!_userRepository.IsSupportedVisibilityField(normalizedFieldName))
+        {
+            throw new ArgumentException("Unsupported profile field.");
+        }
+
+        var normalizedVisibilityValue = char.ToUpper(normalizedVisibility[0]) + normalizedVisibility[1..].ToLower();
+        var isUpdated = _userRepository.UpdateProfileFieldVisibility(
+            userId,
+            normalizedFieldName,
+            normalizedVisibilityValue);
+
+        if (!isUpdated)
+        {
+            throw new KeyNotFoundException($"User {userId} not found.");
+        }
+
+        return new UpdateProfileFieldVisibilityResponse
+        {
+            UserId = userId,
+            FieldName = normalizedFieldName,
+            Visibility = normalizedVisibilityValue,
+            Message = "Profile field visibility updated successfully."
+        };
     }
 
     public async Task<LoginUserResponse> LoginAsync(LoginUserRequest loginUserRequest, CancellationToken cancellationToken = default)

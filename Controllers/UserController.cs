@@ -111,6 +111,39 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPatch("{userId}/profile/visibility")]
+    public IActionResult UpdateProfileFieldVisibility(
+        int userId,
+        [FromBody] UpdateProfileFieldVisibilityRequest request)
+    {
+        if (request == null)
+        {
+            return BadRequest(new { message = "Visibility payload is required." });
+        }
+
+        try
+        {
+            var response = _userService.UpdateProfileFieldVisibility(
+                userId,
+                request.FieldName,
+                request.Visibility);
+
+            return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating profile field visibility: {ex.Message}");
+        }
+    }
+
     [HttpPost]
     public IActionResult AddNewUser([FromBody] CreateUser user)
     {

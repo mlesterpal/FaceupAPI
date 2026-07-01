@@ -132,17 +132,26 @@ public partial class FaceupContext : DbContext
 
             entity.Property(e => e.Address).HasMaxLength(500);
             entity.Property(e => e.Bio).HasMaxLength(1000);
+            entity.Property(e => e.BioVisibility).HasMaxLength(20);
             entity.Property(e => e.College).HasMaxLength(200);
+            entity.Property(e => e.CollegeVisibility).HasMaxLength(20);
             entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.GenderVisibility).HasMaxLength(20);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.Gender).HasMaxLength(20);
+            entity.Property(e => e.BirthDateVisibility).HasMaxLength(20);
             entity.Property(e => e.HighSchool).HasMaxLength(200);
+            entity.Property(e => e.HighSchoolVisibility).HasMaxLength(20);
             entity.Property(e => e.Hobbies).HasMaxLength(500);
+            entity.Property(e => e.HobbiesVisibility).HasMaxLength(20);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.PhoneVisibility).HasMaxLength(20);
             entity.Property(e => e.ProfilePicture).HasMaxLength(500);
             entity.Property(e => e.Work).HasMaxLength(200);
+            entity.Property(e => e.WorkVisibility).HasMaxLength(20);
+            entity.Property(e => e.AddressVisibility).HasMaxLength(20);
         });
 
         OnModelCreatingPartial(modelBuilder);
