@@ -17,9 +17,13 @@ public partial class FaceupContext : DbContext
 
     public virtual DbSet<Comment> Comments { get; set; }
 
+    public virtual DbSet<Conversation> Conversations { get; set; }
+
     public virtual DbSet<Friendship> Friendships { get; set; }
 
     public virtual DbSet<Like> Likes { get; set; }
+
+    public virtual DbSet<Message> Messages { get; set; }
 
     public virtual DbSet<Post> Posts { get; set; }
 
@@ -45,6 +49,29 @@ public partial class FaceupContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comments_Users");
+        });
+
+        modelBuilder.Entity<Conversation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Conversa__3214EC07B482112E");
+
+            entity.HasIndex(e => new { e.User1Id, e.User2Id }, "UX_Conversations_UserPair").IsUnique();
+
+            entity.HasIndex(e => new { e.User1Id, e.LastMessageAt }, "IX_Conversations_User1_LastMessageAt");
+
+            entity.HasIndex(e => new { e.User2Id, e.LastMessageAt }, "IX_Conversations_User2_LastMessageAt");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.User1).WithMany(p => p.ConversationUser1s)
+                .HasForeignKey(d => d.User1Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Conversations_User1");
+
+            entity.HasOne(d => d.User2).WithMany(p => p.ConversationUser2s)
+                .HasForeignKey(d => d.User2Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Conversations_User2");
         });
 
         modelBuilder.Entity<Friendship>(entity =>
@@ -92,6 +119,29 @@ public partial class FaceupContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Likes_Users");
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC073DE4E0A6");
+
+            entity.HasIndex(e => new { e.ConversationId, e.CreatedAt }, "IX_Messages_ConversationId_CreatedAt");
+
+            entity.HasIndex(e => new { e.ConversationId, e.IsRead }, "IX_Messages_ConversationId_IsRead");
+
+            entity.HasIndex(e => e.SenderUserId, "IX_Messages_SenderUserId");
+
+            entity.Property(e => e.Body).HasMaxLength(2000);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.Conversation).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.ConversationId)
+                .HasConstraintName("FK_Messages_Conversation");
+
+            entity.HasOne(d => d.SenderUser).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.SenderUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Messages_SenderUser");
         });
 
         modelBuilder.Entity<Post>(entity =>

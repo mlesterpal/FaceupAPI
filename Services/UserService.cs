@@ -56,6 +56,11 @@ public class UserService
         };
     }
 
+    public List<UserListItemResponse> GetUsers()
+    {
+        return _userRepository.GetUsers();
+    }
+
     public async Task<string> UpdateProfilePictureAsync(
         int userId,
         IFormFile image,

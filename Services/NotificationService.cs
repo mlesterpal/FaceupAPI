@@ -14,7 +14,8 @@ public class NotificationService
             ["PostComment"] = actorName => $"{actorName} commented on your post.",
             ["PostShare"] = actorName => $"{actorName} shared your post.",
             ["FriendRequestSent"] = actorName => $"{actorName} sent you a friend request.",
-            ["FriendRequestAccepted"] = actorName => $"{actorName} accepted your friend request."
+            ["FriendRequestAccepted"] = actorName => $"{actorName} accepted your friend request.",
+            ["DirectMessage"] = actorName => $"{actorName} sent you a message."
         };
 
     public NotificationService(NotificationRepository notificationRepository)

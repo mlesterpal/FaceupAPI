@@ -35,6 +35,8 @@ builder.Services.AddScoped<FriendRepository>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<NotificationRepository>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<MessageRepository>();
+builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
 

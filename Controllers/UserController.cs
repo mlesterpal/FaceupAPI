@@ -17,6 +17,20 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet]
+    public IActionResult GetUsers()
+    {
+        try
+        {
+            var users = _userService.GetUsers();
+            return Ok(new { results = users });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error retrieving users: {ex.Message}");
+        }
+    }
+
     [HttpGet("{userId}")]
     public IActionResult GetUser(int userId)
     {

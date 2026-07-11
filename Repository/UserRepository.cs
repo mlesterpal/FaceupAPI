@@ -1,5 +1,6 @@
 ﻿using Faceup.Models;
 using Faceup.Models.Dto;
+using Faceup.Models.Response;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,20 @@ public class UserRepository
     public User? GetUserById(int id)
     {
         return _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == id);
+    }
+
+    public List<UserListItemResponse> GetUsers()
+    {
+        return _context.Users
+            .AsNoTracking()
+            .Select(u => new UserListItemResponse
+            {
+                Id = u.Id,
+                FirstName = u.FirstName ?? string.Empty,
+                LastName = u.LastName,
+                ProfilePicture = u.ProfilePicture
+            })
+            .ToList();
     }
 
     public User? GetUserByEmail(string email)

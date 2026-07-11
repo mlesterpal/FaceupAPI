@@ -55,6 +55,10 @@ public partial class User
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
+    public virtual ICollection<Conversation> ConversationUser1s { get; set; } = new List<Conversation>();
+
+    public virtual ICollection<Conversation> ConversationUser2s { get; set; } = new List<Conversation>();
+
     public virtual ICollection<Friendship> FriendshipReceivers { get; set; } = new List<Friendship>();
 
     public virtual ICollection<Friendship> FriendshipRequesters { get; set; } = new List<Friendship>();
@@ -62,6 +66,8 @@ public partial class User
     public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
 
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+
+    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
     public virtual ICollection<Share> Shares { get; set; } = new List<Share>();
 }
