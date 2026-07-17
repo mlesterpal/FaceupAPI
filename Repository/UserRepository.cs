@@ -28,7 +28,7 @@ public class UserRepository
         _context = context;
     }
 
-    public void AddUser(CreateUser newUser)
+    public User AddUser(CreateUser newUser)
     {
         var user = new User
         {
@@ -37,10 +37,29 @@ public class UserRepository
             Password = newUser.Password,
             Email = newUser.Email,
             BirthDate = newUser.BirthDate,
-            Gender = newUser.Gender
+            Gender = newUser.Gender,
+            BioVisibility = "Private",
+            AddressVisibility = "Private",
+            WorkVisibility = "Private",
+            HighSchoolVisibility = "Private",
+            CollegeVisibility = "Private",
+            HobbiesVisibility = "Private",
+            PhoneVisibility = "Private",
+            GenderVisibility = "Private",
+            BirthDateVisibility = "Private"
         };
         _context.Users.Add(user);
-        _context.SaveChanges();
+        try
+        {
+            _context.SaveChanges();
+        }
+        catch (DbUpdateException ex) when (
+            ex.InnerException is SqlException sqlEx &&
+            (sqlEx.Number == 2627 || sqlEx.Number == 2601))
+        {
+            throw new InvalidOperationException("This email is already registered.");
+        }
+        return user;
     }
 
     public User? GetUserById(int id)

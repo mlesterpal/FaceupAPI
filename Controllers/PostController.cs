@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Faceup.Models.Dto;
 using Faceup.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Faceup.Controllers
 {
@@ -19,11 +21,18 @@ namespace Faceup.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddNewPost([FromForm] CreatePostRequest request, CancellationToken cancellationToken)
         {
             try
             {
+                var userId = GetAuthenticatedUserId();
+                if (userId <= 0)
+                {
+                    return Unauthorized(new { message = "Unauthorized." });
+                }
+
                 if (string.IsNullOrWhiteSpace(request.Message)
                     && (request.Image == null || request.Image.Length == 0))
                 {
@@ -31,7 +40,7 @@ namespace Faceup.Controllers
                 }
 
                 var imageUrl = await _fileStorage.SaveImageAsync(request.Image, cancellationToken);
-                _postService.AddPost(request.Message, imageUrl);
+                _postService.AddPost(userId, request.Message, imageUrl);
 
                 return Ok(new
                 {
@@ -204,6 +213,15 @@ namespace Faceup.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting post: {ex.Message}");
             }
+        }
+
+        private int GetAuthenticatedUserId()
+        {
+            var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(ClaimTypes.Name)
+                ?? User.FindFirstValue("sub");
+
+            return int.TryParse(idValue, out var userId) ? userId : 0;
         }
     }
 }

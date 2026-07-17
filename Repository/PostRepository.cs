@@ -14,11 +14,11 @@ namespace Faceup.Repository
             _context = context;
         }
 
-        public void AddPost(string? message, string? imageUrl)
+        public void AddPost(int userId, string? message, string? imageUrl)
         {
             var post = new Post
             {
-                UserId = 2,
+                UserId = userId,
                 Message = message,
                 ImageUrl = imageUrl
             };

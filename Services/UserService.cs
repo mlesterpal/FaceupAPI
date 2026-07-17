@@ -8,16 +8,33 @@ public class UserService
 {
     private readonly UserRepository _userRepository;
     private readonly FileStorageService _fileStorage;
+    private readonly TokenService _tokenService;
 
-    public UserService(UserRepository userRepository, FileStorageService fileStorage)
+    public UserService(UserRepository userRepository, FileStorageService fileStorage, TokenService tokenService)
     {
         _userRepository = userRepository;
         _fileStorage = fileStorage;
+        _tokenService = tokenService;
     }
 
-    public void AddUser(CreateUser newUser)
+    public LoginUserResponse AddUser(CreateUser newUser)
     {
-        _userRepository.AddUser(newUser);
+        if (string.IsNullOrWhiteSpace(newUser.FirstName) ||
+            string.IsNullOrWhiteSpace(newUser.LastName) ||
+            string.IsNullOrWhiteSpace(newUser.Email) ||
+            string.IsNullOrWhiteSpace(newUser.Password) ||
+            string.IsNullOrWhiteSpace(newUser.Gender))
+        {
+            throw new ArgumentException("FirstName, LastName, Email, Password, and Gender are required.");
+        }
+
+        if (_userRepository.GetUserByEmail(newUser.Email) != null)
+        {
+            throw new InvalidOperationException("This email is already registered.");
+        }
+
+        var createdUser = _userRepository.AddUser(newUser);
+        return BuildLoginResponse(createdUser);
     }
 
     public UserProfileResponse? GetUserProfile(int userId)
@@ -167,12 +184,24 @@ public class UserService
             throw new UnauthorizedAccessException("Invalid password.");
         }
 
-        return await Task.FromResult(new LoginUserResponse
+        return await Task.FromResult(BuildLoginResponse(user));
+    }
+
+    public UserProfileResponse GetCurrentUserProfile(int userId)
+    {
+        return GetUserProfile(userId)
+            ?? throw new KeyNotFoundException("User not found.");
+    }
+
+    private LoginUserResponse BuildLoginResponse(Models.User user)
+    {
+        return new LoginUserResponse
         {
+            Token = _tokenService.GenerateToken(user),
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
             ProfilePicture = user.ProfilePicture
-        });
+        };
     }
 }
