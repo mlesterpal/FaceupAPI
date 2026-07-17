@@ -15,9 +15,9 @@ namespace Faceup.Services
             _notificationService = notificationService;
         }
 
-        public void AddPost(string? message, string? imageUrl)
+        public void AddPost(int userId, string? message, string? imageUrl)
         {
-            _postRepository.AddPost(message, imageUrl);
+            _postRepository.AddPost(userId, message, imageUrl);
         }
 
         public List<UserPostResponse> GetUserPosts(int? userId, int? viewerUserId)

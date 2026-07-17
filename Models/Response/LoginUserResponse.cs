@@ -2,6 +2,8 @@ namespace Faceup.Models.Response;
 
 public class LoginUserResponse
 {
+    public string Token { get; set; } = string.Empty;
+
     public int Id { get; set; }
 
     public string? FirstName { get; set; }

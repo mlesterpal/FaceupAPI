@@ -1,7 +1,9 @@
 ﻿using Faceup.Models.Dto;
 using Faceup.Models.Response;
 using Faceup.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace Faceup.Controllers;
@@ -47,6 +49,31 @@ public class UserController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, $"Error retrieving user: {ex.Message}");
+        }
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public IActionResult GetMe()
+    {
+        try
+        {
+            var userId = GetAuthenticatedUserId();
+            if (userId <= 0)
+            {
+                return Unauthorized(new { message = "Unauthorized." });
+            }
+
+            var user = _userService.GetCurrentUserProfile(userId);
+            return Ok(user);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error retrieving current user: {ex.Message}");
         }
     }
 
@@ -163,8 +190,16 @@ public class UserController : ControllerBase
     {
         try
         {
-            _userService.AddUser(user);
-            return Ok(new { message = "User added successfully" });
+            var response = _userService.AddUser(user);
+            return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -192,5 +227,14 @@ public class UserController : ControllerBase
         {
             return StatusCode(500, $"Error logging in user: {ex.Message}");
         }
+    }
+
+    private int GetAuthenticatedUserId()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue(ClaimTypes.Name)
+            ?? User.FindFirstValue("sub");
+
+        return int.TryParse(idValue, out var userId) ? userId : 0;
     }
 }
