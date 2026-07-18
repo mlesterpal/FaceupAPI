@@ -141,9 +141,10 @@ public class UserService
         var normalizedVisibility = visibility.Trim();
 
         if (!string.Equals(normalizedVisibility, "Public", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(normalizedVisibility, "Private", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(normalizedVisibility, "Private", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(normalizedVisibility, "Pinned", StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentException("Visibility must be either Public or Private.");
+            throw new ArgumentException("Visibility must be Public, Private, or Pinned.");
         }
 
         if (!_userRepository.IsSupportedVisibilityField(normalizedFieldName))
